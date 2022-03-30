@@ -1,0 +1,33 @@
+version: "3"
+services:
+  postgres:
+    container_name: postgres_2
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - G:\docker-family\aas\postgres:/var/lib/postgresql/data
+      # - /data/postgres:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - postgres
+
+  pgadmin:
+    links:
+      - postgres:postgres
+    container_name: pgadmin_2
+    image: dpage/pgadmin4
+    ports:
+      - "8080:80"
+    volumes:
+      - G:\docker-family\aas\pgadmin:/var/lib/pgadmin
+      # - /data/pgadmin:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - postgres
+  
+networks:
+  postgres:
+    driver: bridge
