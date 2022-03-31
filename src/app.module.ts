@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
+import { Workgroup } from './workgroup/workgroup.entity';
+import { WorkgroupModule } from './workgroup/workgroup.module';
 
 require('dotenv').config();
 
@@ -14,11 +16,12 @@ require('dotenv').config();
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [User],
+      entities: [User, Workgroup],
       synchronize: true,
       autoLoadEntities: true,
     }),
     UserModule,
+    WorkgroupModule,
   ],
   providers: [],
   controllers: [],

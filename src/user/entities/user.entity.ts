@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Workgroup } from 'src/workgroup/workgroup.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -26,4 +33,15 @@ export class User {
   @ApiProperty({ description: 'Никнейм телеграма', example: 'luxorylife' })
   @Column({ nullable: true })
   public telegram: string;
+
+  @ApiProperty({
+    description: 'Рабочая группа пользователя',
+    example: {
+      id: 1,
+      name: 'Системное администрирование',
+    },
+  })
+  @ManyToOne(() => Workgroup, (workgroup: Workgroup) => workgroup.users)
+  @JoinColumn()
+  public workgroup: Workgroup;
 }
