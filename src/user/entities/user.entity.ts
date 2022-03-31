@@ -19,11 +19,11 @@ export class User {
   public name: string;
 
   @ApiProperty({ description: 'Почта', example: 'user@mail.ru' })
-  @Column({ select: false, nullable: false })
+  @Column({ select: false, nullable: false, unique: true })
   public email: string;
 
   @ApiProperty({ description: 'Логин', example: 'ponchik009' })
-  @Column({ select: false, nullable: false })
+  @Column({ nullable: false, unique: true })
   public login: string;
 
   @ApiProperty({ description: 'Хешированный пароль', example: 'qwerty123' })

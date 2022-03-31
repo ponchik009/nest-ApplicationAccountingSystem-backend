@@ -6,5 +6,6 @@ import { WorkgroupService } from './workgroup.service';
 @Module({
   providers: [WorkgroupService],
   imports: [TypeOrmModule.forFeature([Workgroup])],
+  exports: [WorkgroupService],
 })
 export class WorkgroupModule {}
