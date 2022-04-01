@@ -8,16 +8,11 @@ import {
 } from 'class-validator';
 import { Workgroup } from 'src/workgroup/workgroup.entity';
 
-export class CreateUserDto {
+export class GetUserDto {
   @ApiProperty({ description: 'ФИО', example: 'Иванов Иван Иванович' })
   @IsString()
   @IsNotEmpty()
   public name: string;
-
-  @ApiProperty({ description: 'Почта', example: 'user@mail.ru' })
-  @IsEmail()
-  @IsNotEmpty()
-  public email: string;
 
   @ApiProperty({ description: 'Логин', example: 'ponchik009' })
   @IsString()
@@ -25,23 +20,18 @@ export class CreateUserDto {
   @IsNotEmpty()
   public login: string;
 
-  @ApiProperty({ description: 'Хешированный пароль', example: 'qwerty123' })
-  @IsString()
-  @Length(6, 25)
-  @IsNotEmpty()
-  public password: string;
-
   @ApiProperty({
     description: 'Никнейм телеграма',
     example: 'luxorylife',
-    required: false,
   })
   public telegram: string;
 
   @ApiProperty({
     description: 'Рабочая группа',
-    required: true,
-    type: () => Workgroup,
+    example: {
+      id: 1,
+      name: 'Системное администрирование',
+    },
   })
   @IsNotEmpty()
   public workgroup: Workgroup;

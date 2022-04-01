@@ -16,13 +16,15 @@ import { Response } from 'express';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { WorkgroupsGuard } from './guard/workgroups.guard';
 import { Workgroups } from './workgroups.decorator';
+import { GetUserDto } from 'src/user/dto/getUserDto.dto';
+import { LoginDto } from 'src/user/dto/loginDto.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: 'Регистрация' })
-  @ApiResponse({ status: 201 })
+  @ApiResponse({ status: 201, type: GetUserDto })
   @ApiBody({ type: CreateUserDto })
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
@@ -33,6 +35,9 @@ export class AuthController {
   }
 
   @UseGuards(LocalAuthenticationGuard)
+  @ApiOperation({ summary: 'Вход в аккаунт' })
+  @ApiResponse({ status: 200, type: GetUserDto })
+  @ApiBody({ type: LoginDto })
   @Post('login')
   async logIn(@Req() request: RequestWithUser, @Res() response: Response) {
     const user = request.user;
@@ -41,6 +46,9 @@ export class AuthController {
     return response.send(user);
   }
 
+  @UseGuards(LocalAuthenticationGuard)
+  @ApiOperation({ summary: 'Выход из аккаунта' })
+  @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthenticationGuard)
   @Post('logout')
   async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
@@ -49,6 +57,8 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthenticationGuard)
+  @ApiOperation({ summary: 'Аутентификация по токену' })
+  @ApiResponse({ status: 200, type: GetUserDto })
   @Get()
   authenticate(@Req() request: RequestWithUser) {
     const user = request.user;
