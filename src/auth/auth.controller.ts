@@ -14,6 +14,8 @@ import { LocalAuthenticationGuard } from './guard/local.guard';
 import RequestWithUser from './interface/requestWithUser.interface';
 import { Response } from 'express';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { WorkgroupsGuard } from './guard/workgroups.guard';
+import { Workgroups } from './workgroups.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -22,6 +24,9 @@ export class AuthController {
   @ApiOperation({ summary: 'Регистрация' })
   @ApiResponse({ status: 201 })
   @ApiBody({ type: CreateUserDto })
+  @UseGuards(WorkgroupsGuard)
+  @UseGuards(JwtAuthenticationGuard)
+  @Workgroups('Системное администрирование')
   @Post('register')
   async register(@Body() dto: CreateUserDto) {
     return this.authService.register(dto);

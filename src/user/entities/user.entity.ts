@@ -36,10 +36,7 @@ export class User {
 
   @ApiProperty({
     description: 'Рабочая группа пользователя',
-    example: {
-      id: 1,
-      name: 'Системное администрирование',
-    },
+    type: () => Workgroup,
   })
   @ManyToOne(() => Workgroup, (workgroup: Workgroup) => workgroup.users)
   @JoinColumn()

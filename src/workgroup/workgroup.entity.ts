@@ -16,8 +16,8 @@ export class Workgroup {
   public name: string;
 
   @ApiProperty({
-    description: 'Название рабочей группы',
-    example: 'Системное администрирование',
+    description: 'Пользватели рабочей группы',
+    type: () => [User],
   })
   @OneToMany(() => User, (user: User) => user.workgroup)
   public users: User[];
