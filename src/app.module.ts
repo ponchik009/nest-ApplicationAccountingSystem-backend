@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { Workgroup } from './workgroup/workgroup.entity';
 import { WorkgroupModule } from './workgroup/workgroup.module';
 import { AuthModule } from './auth/auth.module';
+import { ReasonsModule } from './reasons/reasons.module';
 
 require('dotenv').config();
 
@@ -24,6 +25,7 @@ require('dotenv').config();
     UserModule,
     WorkgroupModule,
     AuthModule,
+    ReasonsModule,
   ],
   providers: [],
   controllers: [],
