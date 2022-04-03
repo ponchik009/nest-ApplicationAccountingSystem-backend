@@ -10,5 +10,6 @@ import { ReasonsService } from './reasons.service';
   controllers: [ReasonsController],
   providers: [ReasonsService],
   imports: [TypeOrmModule.forFeature([RequestReason, GlobalReason, Program])],
+  exports: [ReasonsService],
 })
 export class ReasonsModule {}

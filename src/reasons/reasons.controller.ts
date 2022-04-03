@@ -3,7 +3,7 @@ import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guard/jwt.guard';
 import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import { Workgroups } from 'src/auth/workgroups.decorator';
-import { SISADMIN } from 'src/consts/workgroups.names';
+import { WORKGROUP_SISADMIN } from 'src/consts/workgroups.names';
 import { CreateGlobalReasonDto } from './dto/createGlobalReason.dto';
 import { CreateProgram } from './dto/createProgram.dto';
 import { CreateRequestReason } from './dto/createRequestReason.dto';
@@ -19,7 +19,7 @@ export class ReasonsController {
 
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(SISADMIN)
+  @Workgroups(WORKGROUP_SISADMIN)
   @ApiResponse({ status: 201, type: GlobalReason })
   @ApiBody({ type: CreateGlobalReasonDto })
   @Post('/global')
@@ -29,7 +29,7 @@ export class ReasonsController {
 
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(SISADMIN)
+  @Workgroups(WORKGROUP_SISADMIN)
   @ApiResponse({ status: 201, type: RequestReason })
   @ApiBody({ type: CreateGlobalReasonDto })
   @Post()
@@ -39,7 +39,7 @@ export class ReasonsController {
 
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(SISADMIN)
+  @Workgroups(WORKGROUP_SISADMIN)
   @ApiResponse({ status: 201, type: Program })
   @ApiBody({ type: CreateGlobalReasonDto })
   @Post('/program')

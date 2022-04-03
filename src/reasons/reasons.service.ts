@@ -72,4 +72,10 @@ export class ReasonsService {
       programs,
     };
   }
+
+  public async getReasonById(id: number) {
+    return await this.requestReasonRepo.findOne(id, {
+      relations: ['defaultWorkgroup'],
+    });
+  }
 }

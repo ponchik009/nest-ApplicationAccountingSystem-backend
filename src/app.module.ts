@@ -13,6 +13,7 @@ import { Request } from './request/entities/request.entity';
 import { RequestStage } from './request/entities/requestStage.entity';
 import { RequestHistory } from './request/entities/requestHistory.entity';
 import { RequestWork } from './request/entities/requestWorks.entity';
+import { RequestModule } from './request/request.module';
 
 require('dotenv').config();
 
@@ -43,6 +44,7 @@ require('dotenv').config();
     WorkgroupModule,
     AuthModule,
     ReasonsModule,
+    RequestModule,
   ],
   providers: [],
   controllers: [],

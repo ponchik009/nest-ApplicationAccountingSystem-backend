@@ -21,7 +21,7 @@ export class RequestWork {
     description:
       'Дата закрытия работы (можно использовать new Date(Date.now()).toUTCString())',
   })
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   public dateOfEnd: Date;
 
   @ManyToOne(() => Request)
