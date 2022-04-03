@@ -2,7 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReasonsService } from 'src/reasons/reasons.service';
 import { User } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
+import { AppointRequest } from './dto/appointRequest.dto';
 import { CreateRequest } from './dto/createRequest.dto';
 import { CreateStage } from './dto/createStage.dto';
 import { Request } from './entities/request.entity';
@@ -21,6 +23,7 @@ export class RequestService {
     @InjectRepository(RequestWork)
     private requestWorkRepo: Repository<RequestWork>,
     private reasonsService: ReasonsService,
+    private userService: UserService,
   ) {}
 
   public async createStage(dto: CreateStage) {
@@ -83,6 +86,7 @@ export class RequestService {
   public async getMy(user: User) {
     return await this.requestRepo.find({
       where: { user: { id: user.id } },
+      order: { stage: 'DESC' },
       relations: ['stage'],
     });
   }
@@ -91,20 +95,29 @@ export class RequestService {
     return await this.requestRepo
       .createQueryBuilder('request')
       .leftJoin('request.works', 'requestWork')
+      .leftJoinAndSelect('request.stage', 'requestStage')
       .where('requestWork.userId = :id', { id: user.id })
       .getMany();
   }
 
   public async getById(id: number) {
-    const request = await this.requestRepo.findOne(id);
+    // const request = await this.requestRepo.findOne(id, {
+    //   relations: ['stage', 'user', 'works'],
+    // });
+
+    const request = await this.requestRepo
+      .createQueryBuilder('request')
+      .select(['request'])
+      .leftJoinAndSelect('request.user', 'client')
+      .leftJoinAndSelect('request.stage', 'stage')
+      .leftJoinAndSelect('request.works', 'works')
+      .leftJoinAndSelect('works.user', 'perfromer')
+      .where('request.id = :id', { id })
+      .getOne();
 
     if (!request) {
       throw new HttpException('Заявка не найдена!', HttpStatus.NOT_FOUND);
     }
-
-    // if (request.user.id !== user.id && !request.works.some(work => work.user.id === user.id)) {
-    //   throw new HttpException("")
-    // }
 
     return request;
   }
@@ -120,5 +133,112 @@ export class RequestService {
     }
 
     return history;
+  }
+
+  public async appoint(id: number, dto: AppointRequest, appointer: User) {
+    const request = await this.getById(id);
+    const works = await this.requestWorkRepo.find({
+      where: {
+        request: { id },
+        user: null,
+        workgroup: { id: appointer.workgroup.id },
+      },
+    });
+
+    if (!works.length) {
+      throw new HttpException(
+        'Работ по заявке не найдено',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (appointer.workgroup.id !== appointer.workgroup.id) {
+      throw new HttpException(
+        'Нельзя назначить заявку пользователю из другого отдела',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    works[0].user = appointer;
+    const work = await this.requestWorkRepo.save(works[0]);
+    const newStage = await this.requestStageRepo.findOne({
+      name: 'В процессе',
+    });
+
+    // сохраняем обновленный статус заявки
+    request.stage = newStage;
+    await this.requestRepo.save(request);
+
+    // отображаем изменение в истории заявки
+    const newHistory = this.requestHistoryRepo.create({
+      info: 'Заявка принята в обработку специалистом ' + appointer.name,
+      date: new Date(Date.now()),
+      stage: newStage,
+      request,
+    });
+    await this.requestHistoryRepo.save(newHistory);
+
+    return request;
+  }
+
+  public async perform(id: number, performer: User) {
+    const request = await this.getById(id);
+
+    const works = await this.requestWorkRepo.find({
+      where: { request: { id }, user: { id: performer.id }, dateOfEnd: null },
+    });
+
+    if (!works.length) {
+      throw new HttpException('Нет работ по заявке', HttpStatus.NOT_FOUND);
+    }
+
+    // меняем статус заявки
+    const newStage = await this.requestStageRepo.findOne({
+      name: 'В завершении',
+    });
+    request.stage = newStage;
+    await this.requestRepo.save(request);
+
+    // сохраняем в историю
+    const newHistory = this.requestHistoryRepo.create({
+      info: 'Заявка завершена исполнителем ' + performer.name,
+      date: new Date(Date.now()),
+      stage: newStage,
+      request,
+    });
+    await this.requestHistoryRepo.save(newHistory);
+
+    // помечаем дату окончания работы
+    works[0].dateOfEnd = new Date(Date.now());
+    await this.requestWorkRepo.save(works[0]);
+
+    return request;
+  }
+
+  public async approve(id: number, client: User) {
+    const request = await this.getById(id);
+
+    if (request.user.id !== client.id) {
+      throw new HttpException(
+        'Заявка не принадлежит пользователю!',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    // меняем статус заявки
+    const newStage = await this.requestStageRepo.findOne({
+      name: 'Закрыта',
+    });
+    request.stage = newStage;
+    await this.requestRepo.save(request);
+
+    // сохраняем в историю
+    const newHistory = this.requestHistoryRepo.create({
+      info: 'Заявка закрыта пользователем',
+      date: new Date(Date.now()),
+      stage: newStage,
+      request,
+    });
+    await this.requestHistoryRepo.save(newHistory);
   }
 }

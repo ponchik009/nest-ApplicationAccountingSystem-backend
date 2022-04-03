@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -13,6 +14,7 @@ import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import RequestWithUser from 'src/auth/interface/requestWithUser.interface';
 import { Workgroups } from 'src/auth/workgroups.decorator';
 import { WORKGROUP_1S, WORKGROUP_SISADMIN } from 'src/consts/workgroups.names';
+import { AppointRequest } from './dto/appointRequest.dto';
 import { CreateRequest } from './dto/createRequest.dto';
 import { CreateStage } from './dto/createStage.dto';
 import { Request } from './entities/request.entity';
@@ -78,5 +80,31 @@ export class RequestController {
   @Get('/:id/history')
   public getHistory(@Param('id') id: number) {
     return this.requestService.getHistory(id);
+  }
+
+  @UseGuards(WorkgroupsGuard)
+  @UseGuards(JwtAuthenticationGuard)
+  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Patch(':id/appoint')
+  public appoint(
+    @Param('id') id: number,
+    @Req() request: RequestWithUser,
+    @Body() dto: AppointRequest,
+  ) {
+    return this.requestService.appoint(id, dto, request.user);
+  }
+
+  @UseGuards(WorkgroupsGuard)
+  @UseGuards(JwtAuthenticationGuard)
+  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Patch(':id/perform')
+  public perform(@Param('id') id: number, @Req() request: RequestWithUser) {
+    return this.requestService.perform(id, request.user);
+  }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Patch(':id/approve')
+  public approve(@Param('id') id: number, @Req() request: RequestWithUser) {
+    return this.requestService.approve(id, request.user);
   }
 }

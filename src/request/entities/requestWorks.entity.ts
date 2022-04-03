@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
 import { Workgroup } from 'src/workgroup/workgroup.entity';
 import {
+  AfterLoad,
   Column,
   Entity,
   JoinColumn,
