@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReasonsService } from 'src/reasons/reasons.service';
 import { User } from 'src/user/entities/user.entity';
@@ -85,5 +85,40 @@ export class RequestService {
       where: { user: { id: user.id } },
       relations: ['stage'],
     });
+  }
+
+  public async getMyWork(user: User) {
+    return await this.requestRepo
+      .createQueryBuilder('request')
+      .leftJoin('request.works', 'requestWork')
+      .where('requestWork.userId = :id', { id: user.id })
+      .getMany();
+  }
+
+  public async getById(id: number) {
+    const request = await this.requestRepo.findOne(id);
+
+    if (!request) {
+      throw new HttpException('Заявка не найдена!', HttpStatus.NOT_FOUND);
+    }
+
+    // if (request.user.id !== user.id && !request.works.some(work => work.user.id === user.id)) {
+    //   throw new HttpException("")
+    // }
+
+    return request;
+  }
+
+  public async getHistory(id: number) {
+    const history = await this.requestHistoryRepo.find({
+      where: { request: { id: id } },
+      relations: ['stage'],
+    });
+
+    if (!history) {
+      throw new HttpException('История не найдена', HttpStatus.NOT_FOUND);
+    }
+
+    return history;
   }
 }

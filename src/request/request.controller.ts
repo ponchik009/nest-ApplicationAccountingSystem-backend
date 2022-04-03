@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guard/jwt.guard';
 import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
@@ -48,7 +56,27 @@ export class RequestController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Get('/my')
-  public getmy(@Req() request: RequestWithUser) {
+  public getMy(@Req() request: RequestWithUser) {
     return this.requestService.getMy(request.user);
+  }
+
+  @UseGuards(WorkgroupsGuard)
+  @UseGuards(JwtAuthenticationGuard)
+  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Get('/myWork')
+  public getMyWork(@Req() request: RequestWithUser) {
+    return this.requestService.getMyWork(request.user);
+  }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Get('/:id')
+  public get(@Param('id') id: number) {
+    return this.requestService.getById(id);
+  }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Get('/:id/history')
+  public getHistory(@Param('id') id: number) {
+    return this.requestService.getHistory(id);
   }
 }

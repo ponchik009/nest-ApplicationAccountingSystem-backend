@@ -6,9 +6,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { workerData } from 'worker_threads';
 import { RequestStage } from './requestStage.entity';
+import { RequestWork } from './requestWorks.entity';
 
 @Entity()
 export class Request {
@@ -43,4 +46,7 @@ export class Request {
   @ManyToOne(() => RequestReason)
   @JoinColumn()
   public reason: RequestReason;
+
+  @OneToMany(() => RequestWork, (work: RequestWork) => work.request)
+  public works: RequestWork[];
 }
