@@ -6,6 +6,13 @@ import { Workgroup } from './workgroup/workgroup.entity';
 import { WorkgroupModule } from './workgroup/workgroup.module';
 import { AuthModule } from './auth/auth.module';
 import { ReasonsModule } from './reasons/reasons.module';
+import { GlobalReason } from './reasons/entities/globalReason.entity';
+import { RequestReason } from './reasons/entities/requestReason.entity';
+import { Program } from './reasons/entities/program.entity';
+import { Request } from './request/entities/request.entity';
+import { RequestStage } from './request/entities/requestStage.entity';
+import { RequestHistory } from './request/entities/requestHistory.entity';
+import { RequestWork } from './request/entities/requestWorks.entity';
 
 require('dotenv').config();
 
@@ -18,7 +25,17 @@ require('dotenv').config();
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [User, Workgroup],
+      entities: [
+        User,
+        Workgroup,
+        GlobalReason,
+        RequestReason,
+        Program,
+        Request,
+        RequestStage,
+        RequestHistory,
+        RequestWork,
+      ],
       synchronize: true,
       autoLoadEntities: true,
     }),

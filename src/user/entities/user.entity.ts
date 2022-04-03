@@ -31,7 +31,7 @@ export class User {
   public password: string;
 
   @ApiProperty({ description: 'Никнейм телеграма', example: 'luxorylife' })
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   public telegram: string;
 
   @ApiProperty({
