@@ -102,6 +102,14 @@ export class RequestController {
     return this.requestService.perform(id, request.user);
   }
 
+  @UseGuards(WorkgroupsGuard)
+  @UseGuards(JwtAuthenticationGuard)
+  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Patch(':id/refuse')
+  public refyse(@Param('id') id: number, @Req() request: RequestWithUser) {
+    return this.requestService.refuse(id, request.user);
+  }
+
   @UseGuards(JwtAuthenticationGuard)
   @Patch(':id/approve')
   public approve(@Param('id') id: number, @Req() request: RequestWithUser) {

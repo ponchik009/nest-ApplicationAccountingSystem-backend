@@ -92,9 +92,9 @@ export class RequestService {
   }
 
   public async getMyWork(user: User) {
-    return await this.requestRepo
-      .createQueryBuilder('request')
-      .leftJoin('request.works', 'requestWork')
+    return await this.requestWorkRepo
+      .createQueryBuilder('requestWork')
+      .leftJoinAndSelect('requestWork.request', 'request')
       .leftJoinAndSelect('request.stage', 'requestStage')
       .where('requestWork.userId = :id', { id: user.id })
       .getMany();
@@ -144,6 +144,7 @@ export class RequestService {
         workgroup: { id: appointer.workgroup.id },
       },
     });
+    const user = await this.userService.getById(dto.user.id);
 
     if (!works.length) {
       throw new HttpException(
@@ -152,14 +153,14 @@ export class RequestService {
       );
     }
 
-    if (appointer.workgroup.id !== appointer.workgroup.id) {
+    if (user.workgroup.id !== appointer.workgroup.id) {
       throw new HttpException(
         'Нельзя назначить заявку пользователю из другого отдела',
         HttpStatus.FORBIDDEN,
       );
     }
 
-    works[0].user = appointer;
+    works[0].user = user;
     const work = await this.requestWorkRepo.save(works[0]);
     const newStage = await this.requestStageRepo.findOne({
       name: 'В процессе',
@@ -171,12 +172,18 @@ export class RequestService {
 
     // отображаем изменение в истории заявки
     const newHistory = this.requestHistoryRepo.create({
-      info: 'Заявка принята в обработку специалистом ' + appointer.name,
+      info: 'Заявка принята в обработку специалистом ' + user.name,
       date: new Date(Date.now()),
       stage: newStage,
       request,
     });
     await this.requestHistoryRepo.save(newHistory);
+
+    request.works.forEach((work) => {
+      if (work.id === works[0].id) {
+        work.user = works[0].user;
+      }
+    });
 
     return request;
   }
@@ -184,18 +191,15 @@ export class RequestService {
   public async perform(id: number, performer: User) {
     const request = await this.getById(id);
 
-    const works = await this.requestWorkRepo.find({
-      where: { request: { id }, user: { id: performer.id }, dateOfEnd: null },
-    });
+    const works = await this.getWorks(id, performer);
 
-    if (!works.length) {
-      throw new HttpException('Нет работ по заявке', HttpStatus.NOT_FOUND);
-    }
+    let newStage = request.stage;
+    if (request.works.filter((work) => work.dateOfEnd === null).length === 1)
+      newStage = await this.requestStageRepo.findOne({
+        name: 'В завершении',
+      });
 
     // меняем статус заявки
-    const newStage = await this.requestStageRepo.findOne({
-      name: 'В завершении',
-    });
     request.stage = newStage;
     await this.requestRepo.save(request);
 
@@ -211,6 +215,12 @@ export class RequestService {
     // помечаем дату окончания работы
     works[0].dateOfEnd = new Date(Date.now());
     await this.requestWorkRepo.save(works[0]);
+
+    request.works.forEach((work) => {
+      if (work.id === works[0].id) {
+        work.dateOfEnd = works[0].dateOfEnd;
+      }
+    });
 
     return request;
   }
@@ -240,5 +250,58 @@ export class RequestService {
       request,
     });
     await this.requestHistoryRepo.save(newHistory);
+  }
+
+  public async rollBack(id: number, client: User) {}
+
+  public async refuse(id: number, performer: User) {
+    const request = await this.getById(id);
+    const works = await this.getWorks(id, performer);
+
+    let newStage = request.stage;
+    if (request.works.filter((work) => work.dateOfEnd !== null).length === 0)
+      newStage = await this.requestStageRepo.findOne({
+        name: 'В ожидании',
+      });
+    // меняем статус заявки
+    request.stage = newStage;
+    await this.requestRepo.save(request);
+
+    // сохраняем в историю
+    const newHistory = this.requestHistoryRepo.create({
+      info: 'Заявка отклонена исполнителем ' + performer.name,
+      date: new Date(Date.now()),
+      stage: newStage,
+      request,
+    });
+    await this.requestHistoryRepo.save(newHistory);
+
+    // помечаем дату окончания работы
+    works[0].user = null;
+    await this.requestWorkRepo.save(works[0]);
+
+    request.works = request.works.filter((work) => work.id !== works[0].id);
+
+    return request;
+  }
+
+  public async redirect(id: number) {}
+
+  public async recruit(id: number) {}
+
+  private async getWorks(requestId: number, performer: User) {
+    const works = await this.requestWorkRepo.find({
+      where: {
+        request: { id: requestId },
+        user: { id: performer.id },
+        dateOfEnd: null,
+      },
+    });
+
+    if (!works.length) {
+      throw new HttpException('Нет работ по заявке', HttpStatus.NOT_FOUND);
+    }
+
+    return works;
   }
 }
