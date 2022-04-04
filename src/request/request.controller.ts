@@ -17,6 +17,8 @@ import { WORKGROUP_1S, WORKGROUP_SISADMIN } from 'src/consts/workgroups.names';
 import { AppointRequest } from './dto/appointRequest.dto';
 import { CreateRequest } from './dto/createRequest.dto';
 import { CreateStage } from './dto/createStage.dto';
+import { RecruitRequest } from './dto/recruitRequest.dto';
+import { RedirectRequest } from './dto/redirectRequest.dto';
 import { Request } from './entities/request.entity';
 import { RequestStage } from './entities/requestStage.entity';
 import { RequestService } from './request.service';
@@ -106,8 +108,31 @@ export class RequestController {
   @UseGuards(JwtAuthenticationGuard)
   @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
   @Patch(':id/refuse')
-  public refyse(@Param('id') id: number, @Req() request: RequestWithUser) {
+  public refuse(@Param('id') id: number, @Req() request: RequestWithUser) {
     return this.requestService.refuse(id, request.user);
+  }
+
+  @UseGuards(WorkgroupsGuard)
+  @UseGuards(JwtAuthenticationGuard)
+  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Patch('redirect')
+  public redirect(
+    @Body() dto: RedirectRequest,
+    @Req() request: RequestWithUser,
+  ) {
+    return this.requestService.redirect(dto, request.user);
+  }
+
+  @UseGuards(WorkgroupsGuard)
+  @UseGuards(JwtAuthenticationGuard)
+  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Patch(':id/recruit')
+  public recruit(
+    @Param('id') id: number,
+    @Body() dto: RecruitRequest[],
+    @Req() request: RequestWithUser,
+  ) {
+    return this.requestService.recruit(id, request.user, dto);
   }
 
   @UseGuards(JwtAuthenticationGuard)
@@ -118,7 +143,7 @@ export class RequestController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Patch(':id/rollback')
-  public rollBac(@Param('id') id: number, @Req() request: RequestWithUser) {
+  public rollBack(@Param('id') id: number, @Req() request: RequestWithUser) {
     return this.requestService.rollBack(id, request.user);
   }
 }

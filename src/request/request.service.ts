@@ -1,12 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { request } from 'http';
 import { ReasonsService } from 'src/reasons/reasons.service';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
+import { WorkgroupService } from 'src/workgroup/workgroup.service';
 import { Repository } from 'typeorm';
 import { AppointRequest } from './dto/appointRequest.dto';
 import { CreateRequest } from './dto/createRequest.dto';
 import { CreateStage } from './dto/createStage.dto';
+import { RecruitRequest } from './dto/recruitRequest.dto';
+import { RedirectRequest } from './dto/redirectRequest.dto';
 import { Request } from './entities/request.entity';
 import { RequestHistory } from './entities/requestHistory.entity';
 import { RequestStage } from './entities/requestStage.entity';
@@ -24,6 +28,7 @@ export class RequestService {
     private requestWorkRepo: Repository<RequestWork>,
     private reasonsService: ReasonsService,
     private userService: UserService,
+    private workgroupService: WorkgroupService,
   ) {}
 
   public async createStage(dto: CreateStage) {
@@ -145,6 +150,16 @@ export class RequestService {
       },
     });
     const user = await this.userService.getById(dto.user.id);
+    const alreadyWork = await this.requestWorkRepo.find({
+      where: { request: { id }, user: { id: user.id } },
+    });
+
+    if (alreadyWork.length) {
+      throw new HttpException(
+        'Пользователь уже работает по этой заявке!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     if (!works.length) {
       throw new HttpException(
@@ -325,9 +340,99 @@ export class RequestService {
     return request;
   }
 
-  public async redirect(id: number) {}
+  public async redirect(dto: RedirectRequest, user: User) {
+    const work = await this.requestWorkRepo
+      .createQueryBuilder('requestWork')
+      .leftJoinAndSelect('requestWork.request', 'request')
+      .leftJoinAndSelect('requestWork.user', 'user')
+      .leftJoinAndSelect('request.stage', 'stage')
+      .leftJoinAndSelect('requestWork.workgroup', 'workgroup')
+      .where('requestWork.id = :id', { id: dto.work.id })
+      .getOne();
 
-  public async recruit(id: number) {}
+    if (!work) {
+      throw new HttpException('Работа не найдена', HttpStatus.NOT_FOUND);
+    }
+
+    const workgroup = await this.workgroupService.getById(dto.workgroup.id);
+
+    if (work.user !== null) {
+      throw new HttpException(
+        'Работа по заявке уже обрабатывается пользователем',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (user.workgroup.id !== work.workgroup.id) {
+      throw new HttpException(
+        'Нельзя перенаправить работу по заявке не из своего отдела!',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    work.workgroup = workgroup;
+    await this.requestWorkRepo.save(work);
+
+    // сохраняем в историю
+    const newHistory = this.requestHistoryRepo.create({
+      info: 'Работа по заявке переведена в отдел  ' + workgroup.name,
+      date: new Date(Date.now()),
+      stage: work.request.stage,
+      request: work.request,
+    });
+    await this.requestHistoryRepo.save(newHistory);
+
+    return work;
+  }
+
+  public async recruit(id: number, performer: User, data: RecruitRequest[]) {
+    const request = await this.getById(id);
+    // console.log(request);
+
+    if (
+      request.stage.name === 'Закрыта' ||
+      request.stage.name === 'В завершении'
+    ) {
+      throw new HttpException(
+        'Заявка уже закрыта или находится в стадии завершения!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (
+      !request.works.some((work) => work.user && work.user.id === performer.id)
+    ) {
+      throw new HttpException(
+        'Пользователь не работает по данной заявке!',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const works = [];
+    for (const recruit of data) {
+      for (let i = 0; i < recruit.count; i++) {
+        works.push(
+          this.requestWorkRepo.create({
+            user: null,
+            workgroup: recruit.workgroup,
+            request: request,
+            dateOfEnd: null,
+          }),
+        );
+      }
+    }
+
+    // сохраняем в историю
+    const newHistory = this.requestHistoryRepo.create({
+      info: 'Объявлен донабор по заявке',
+      date: new Date(Date.now()),
+      stage: request.stage,
+      request: request,
+    });
+    await this.requestHistoryRepo.save(newHistory);
+
+    return await this.requestWorkRepo.save(works);
+  }
 
   private async getWorks(requestId: number, performer: User) {
     const works = await this.requestWorkRepo.find({
