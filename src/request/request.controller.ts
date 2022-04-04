@@ -115,4 +115,10 @@ export class RequestController {
   public approve(@Param('id') id: number, @Req() request: RequestWithUser) {
     return this.requestService.approve(id, request.user);
   }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Patch(':id/rollback')
+  public rollBac(@Param('id') id: number, @Req() request: RequestWithUser) {
+    return this.requestService.rollBack(id, request.user);
+  }
 }

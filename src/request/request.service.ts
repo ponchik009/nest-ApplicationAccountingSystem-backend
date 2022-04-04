@@ -252,7 +252,47 @@ export class RequestService {
     await this.requestHistoryRepo.save(newHistory);
   }
 
-  public async rollBack(id: number, client: User) {}
+  public async rollBack(id: number, client: User) {
+    const request = await this.getById(id);
+
+    if (request.user.id !== client.id) {
+      throw new HttpException(
+        'Не хватает доступа для отката заявки',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    if (request.stage.name !== 'В завершении') {
+      throw new HttpException(
+        'Заявка еще не завершена. Вы не можете ее откатить!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    request.works = request.works.sort(
+      (work1, work2) => work2.dateOfEnd.getTime() - work1.dateOfEnd.getTime(),
+    );
+    request.works[0].dateOfEnd = null;
+
+    const newStage = await this.requestStageRepo.findOne({
+      name: 'В процессе',
+    });
+    request.stage = newStage;
+
+    const newHistory = this.requestHistoryRepo.create({
+      info: 'Заявка откачена пользователем ' + client.name,
+      date: new Date(Date.now()),
+      stage: newStage,
+      request,
+    });
+    await this.requestHistoryRepo.save(newHistory);
+
+    await this.requestRepo.save(request);
+
+    await this.requestWorkRepo.save(request.works[0]);
+
+    return request;
+  }
 
   public async refuse(id: number, performer: User) {
     const request = await this.getById(id);
