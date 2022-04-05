@@ -51,11 +51,20 @@ export class RequestController {
   @ApiBody({ type: CreateRequest })
   @UseGuards(JwtAuthenticationGuard)
   @Post()
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      {
+        name: 'image',
+        maxCount: 10,
+      },
+    ]),
+  )
   public createRequest(
     @Body() dto: CreateRequest,
     @Req() request: RequestWithUser,
+    @UploadedFiles() files,
   ) {
-    return this.requestService.createRequest(dto, request.user);
+    return this.requestService.createRequest(dto, request.user, files);
   }
 
   @UseGuards(WorkgroupsGuard)

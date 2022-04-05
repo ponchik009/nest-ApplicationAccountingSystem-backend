@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { request } from 'http';
 import { CreateMessage } from 'src/message/dto/createMessage.dto';
 import { MessageService } from 'src/message/message.service';
+import { RequestReason } from 'src/reasons/entities/requestReason.entity';
 import { ReasonsService } from 'src/reasons/reasons.service';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
@@ -47,16 +48,24 @@ export class RequestService {
     }
   }
 
-  public async createRequest(dto: CreateRequest, user: User) {
-    const request = this.requestRepo.create(dto);
-    request.date = new Date(Date.now());
+  public async createRequest(dto: CreateRequest, user: User, files) {
     try {
+      const reasonFromJson = JSON.parse(dto.reason) as RequestReason;
+      const reason = await this.reasonsService.getReasonById(reasonFromJson.id);
+      const request = this.requestRepo.create({ ...dto, reason, messages: [] });
+
+      request.date = new Date(Date.now());
       request.stage = await this.requestStageRepo.findOne({
         name: 'В ожидании',
       });
       request.user = user;
-      const reason = await this.reasonsService.getReasonById(dto.reason.id);
       request.specific_name = reason.name;
+      request.messages.push(
+        await this.messageService.create(
+          { user, text: dto.description },
+          files,
+        ),
+      );
 
       const createdRequest = await this.requestRepo.save(request);
 

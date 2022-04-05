@@ -22,8 +22,7 @@ export class CreateRequest {
 
   @ApiProperty({
     description: 'Причина заявки',
-    type: () => RequestReason,
   })
-  @IsObject()
-  public reason: RequestReason;
+  @IsNotEmpty()
+  public reason: string;
 }
