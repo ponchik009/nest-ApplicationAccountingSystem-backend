@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Message } from 'src/message/message.entity';
 import { RequestReason } from 'src/reasons/entities/requestReason.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
@@ -49,4 +50,7 @@ export class Request {
 
   @OneToMany(() => RequestWork, (work: RequestWork) => work.request)
   public works: RequestWork[];
+
+  @OneToMany(() => Message, (message: Message) => message.request)
+  public messages: Message[];
 }

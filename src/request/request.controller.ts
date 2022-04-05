@@ -6,14 +6,22 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guard/jwt.guard';
 import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import RequestWithUser from 'src/auth/interface/requestWithUser.interface';
 import { Workgroups } from 'src/auth/workgroups.decorator';
 import { WORKGROUP_1S, WORKGROUP_SISADMIN } from 'src/consts/workgroups.names';
+import { CreateMessage } from 'src/message/dto/createMessage.dto';
+import { AddMessage } from './dto/addMessage.dto';
 import { AppointRequest } from './dto/appointRequest.dto';
 import { CreateRequest } from './dto/createRequest.dto';
 import { CreateStage } from './dto/createStage.dto';
@@ -145,5 +153,24 @@ export class RequestController {
   @Patch(':id/rollback')
   public rollBack(@Param('id') id: number, @Req() request: RequestWithUser) {
     return this.requestService.rollBack(id, request.user);
+  }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Post(':id/addMessage')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      {
+        name: 'image',
+        maxCount: 10,
+      },
+    ]),
+  )
+  public addMessage(
+    @Param('id') id: number,
+    @Req() request: RequestWithUser,
+    @Body() dto: AddMessage,
+    @UploadedFiles() files,
+  ) {
+    return this.requestService.addMessage(id, request.user, dto, files);
   }
 }

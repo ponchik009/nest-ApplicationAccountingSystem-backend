@@ -1,11 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { request } from 'http';
+import { CreateMessage } from 'src/message/dto/createMessage.dto';
+import { MessageService } from 'src/message/message.service';
 import { ReasonsService } from 'src/reasons/reasons.service';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { WorkgroupService } from 'src/workgroup/workgroup.service';
 import { Repository } from 'typeorm';
+import { AddMessage } from './dto/addMessage.dto';
 import { AppointRequest } from './dto/appointRequest.dto';
 import { CreateRequest } from './dto/createRequest.dto';
 import { CreateStage } from './dto/createStage.dto';
@@ -29,6 +32,7 @@ export class RequestService {
     private reasonsService: ReasonsService,
     private userService: UserService,
     private workgroupService: WorkgroupService,
+    private messageService: MessageService,
   ) {}
 
   public async createStage(dto: CreateStage) {
@@ -116,7 +120,9 @@ export class RequestService {
       .leftJoinAndSelect('request.user', 'client')
       .leftJoinAndSelect('request.stage', 'stage')
       .leftJoinAndSelect('request.works', 'works')
+      .leftJoinAndSelect('request.messages', 'messages')
       .leftJoinAndSelect('works.user', 'perfromer')
+      .leftJoinAndSelect('messages.files', 'files')
       .where('request.id = :id', { id })
       .getOne();
 
@@ -448,5 +454,28 @@ export class RequestService {
     }
 
     return works;
+  }
+
+  public async addMessage(id: number, user: User, dto: AddMessage, files) {
+    const request = await this.getById(id);
+
+    if (
+      user.id !== request.user.id &&
+      !request.works.some((work) => work.user.id === user.id)
+    ) {
+      throw new HttpException(
+        'Вы не можете добавлять сообщения по этой заявке',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    if (request.stage.name === 'В завершении') {
+      throw new HttpException('Заявка уже закрыта!', HttpStatus.BAD_REQUEST);
+    }
+
+    const message = await this.messageService.create({ ...dto, user }, files);
+    request.messages.push(message);
+
+    return await this.requestRepo.save(request);
   }
 }

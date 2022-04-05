@@ -9,6 +9,7 @@ import { RequestHistory } from './entities/requestHistory.entity';
 import { ReasonsModule } from 'src/reasons/reasons.module';
 import { UserModule } from 'src/user/user.module';
 import { WorkgroupModule } from 'src/workgroup/workgroup.module';
+import { MessageModule } from 'src/message/message.module';
 
 @Module({
   providers: [RequestService],
@@ -23,6 +24,7 @@ import { WorkgroupModule } from 'src/workgroup/workgroup.module';
     ReasonsModule,
     UserModule,
     WorkgroupModule,
+    MessageModule,
   ],
 })
 export class RequestModule {}

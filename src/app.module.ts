@@ -14,6 +14,12 @@ import { RequestStage } from './request/entities/requestStage.entity';
 import { RequestHistory } from './request/entities/requestHistory.entity';
 import { RequestWork } from './request/entities/requestWorks.entity';
 import { RequestModule } from './request/request.module';
+import { MessageModule } from './message/message.module';
+import { FileModule } from './file/file.module';
+import { Message } from './message/message.entity';
+import { File } from './file/file.entity';
+import * as path from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 require('dotenv').config();
 
@@ -36,6 +42,8 @@ require('dotenv').config();
         RequestStage,
         RequestHistory,
         RequestWork,
+        Message,
+        File,
       ],
       synchronize: true,
       autoLoadEntities: true,
@@ -45,6 +53,11 @@ require('dotenv').config();
     AuthModule,
     ReasonsModule,
     RequestModule,
+    MessageModule,
+    FileModule,
+    ServeStaticModule.forRoot({
+      rootPath: path.resolve(__dirname, 'static'),
+    }),
   ],
   providers: [],
   controllers: [],
