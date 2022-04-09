@@ -46,8 +46,9 @@ export class UserService {
   }
 
   public async create(dto: CreateUserDto) {
+    const workgroup = await this.workgroupService.getById(dto.workgroup.id);
+    workgroup.users = undefined;
     try {
-      const workgroup = await this.workgroupService.getById(dto.workgroup.id);
       const user = this.userRepo.create({ ...dto, workgroup });
       return await this.userRepo.save(user);
     } catch (err) {

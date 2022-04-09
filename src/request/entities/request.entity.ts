@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Message } from 'src/message/message.entity';
 import { RequestReason } from 'src/reasons/entities/requestReason.entity';
+import { GetUserDto } from 'src/user/dto/getUserDto.dto';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -36,14 +37,26 @@ export class Request {
   @Column({ nullable: false })
   public date: Date;
 
+  @ApiProperty({
+    description: 'Стадия заявки',
+    type: () => RequestStage,
+  })
   @ManyToOne(() => RequestStage)
   @JoinColumn()
   public stage: RequestStage;
 
+  @ApiProperty({
+    description: 'Создатель заявки',
+    type: () => GetUserDto,
+  })
   @ManyToOne(() => User)
   @JoinColumn()
   public user: User;
 
+  @ApiProperty({
+    description: 'Причина заявки',
+    type: () => RequestReason,
+  })
   @ManyToOne(() => RequestReason)
   @JoinColumn()
   public reason: RequestReason;
@@ -51,6 +64,10 @@ export class Request {
   @OneToMany(() => RequestWork, (work: RequestWork) => work.request)
   public works: RequestWork[];
 
+  @ApiProperty({
+    description: 'Собщения заявки',
+    type: () => [Message],
+  })
   @OneToMany(() => Message, (message: Message) => message.request)
   public messages: Message[];
 }

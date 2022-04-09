@@ -13,6 +13,8 @@ export class FileService {
   public async create(files): Promise<File[]> {
     const entities = [];
 
+    if (!files.image || !files.image.length) return [];
+
     for (const file of files.image) {
       const path = this.createFile(file);
       entities.push(

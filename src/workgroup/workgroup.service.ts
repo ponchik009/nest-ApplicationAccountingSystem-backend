@@ -29,10 +29,16 @@ export class WorkgroupService {
   }
 
   public async create(dto: CreateWorkgroup) {
-    let workgroup = this.workgroupRepo.create(dto);
-    workgroup = await this.workgroupRepo.save(workgroup);
+    try {
+      const workgroup = this.workgroupRepo.create(dto);
 
-    return workgroup;
+      return await this.workgroupRepo.save(workgroup);
+    } catch (err) {
+      throw new HttpException(
+        'Такая рабочая группа уже существует!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   public async getUsers(id: number, user: User) {

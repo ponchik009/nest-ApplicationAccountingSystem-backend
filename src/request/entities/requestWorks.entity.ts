@@ -9,6 +9,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { GetRequest } from '../dto/getRequest.dto';
 import { Request } from './request.entity';
 
 @Entity()
@@ -25,6 +26,10 @@ export class RequestWork {
   @Column({ nullable: true })
   public dateOfEnd: Date;
 
+  @ApiProperty({
+    description: 'Заявка, по которой создана работа',
+    type: () => GetRequest,
+  })
   @ManyToOne(() => Request)
   @JoinColumn()
   public request: Request;

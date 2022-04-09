@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { Workgroup } from 'src/workgroup/workgroup.entity';
 
-export class GetUserDto {
+export class GetUserWithoutWorkgroup {
   @ApiProperty({
     description: 'Уникальный идентификатор',
     example: 1,
@@ -31,14 +31,4 @@ export class GetUserDto {
     example: 'luxorylife',
   })
   public telegram: string;
-
-  @ApiProperty({
-    description: 'Рабочая группа',
-    example: {
-      id: 1,
-      name: 'Системное администрирование',
-    },
-  })
-  @IsNotEmpty()
-  public workgroup: Workgroup;
 }

@@ -41,6 +41,10 @@ export class CreateUserDto {
   @ApiProperty({
     description: 'Рабочая группа',
     required: true,
+    example: {
+      id: 2,
+      name: '1С',
+    },
     type: () => Workgroup,
   })
   @IsNotEmpty()

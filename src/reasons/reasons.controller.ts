@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guard/jwt.guard';
 import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import { Workgroups } from 'src/auth/workgroups.decorator';
@@ -13,6 +13,7 @@ import { Program } from './entities/program.entity';
 import { RequestReason } from './entities/requestReason.entity';
 import { ReasonsService } from './reasons.service';
 
+@ApiTags('Причины заявок')
 @Controller('reasons')
 export class ReasonsController {
   constructor(private reasonsService: ReasonsService) {}
@@ -22,6 +23,7 @@ export class ReasonsController {
   @Workgroups(WORKGROUP_SISADMIN)
   @ApiResponse({ status: 201, type: GlobalReason })
   @ApiBody({ type: CreateGlobalReasonDto })
+  @ApiOperation({ summary: 'Создание глобальной причины (1-го уровня)' })
   @Post('/global')
   public createGlobalReason(@Body() dto: CreateGlobalReasonDto) {
     return this.reasonsService.createGlobalReason(dto);
@@ -31,7 +33,8 @@ export class ReasonsController {
   @UseGuards(JwtAuthenticationGuard)
   @Workgroups(WORKGROUP_SISADMIN)
   @ApiResponse({ status: 201, type: RequestReason })
-  @ApiBody({ type: CreateGlobalReasonDto })
+  @ApiBody({ type: CreateRequestReason })
+  @ApiOperation({ summary: 'Создание причины (2-го уровня)' })
   @Post()
   public createRequestReason(@Body() dto: CreateRequestReason) {
     return this.reasonsService.createRequestReason(dto);
@@ -41,7 +44,8 @@ export class ReasonsController {
   @UseGuards(JwtAuthenticationGuard)
   @Workgroups(WORKGROUP_SISADMIN)
   @ApiResponse({ status: 201, type: Program })
-  @ApiBody({ type: CreateGlobalReasonDto })
+  @ApiBody({ type: CreateProgram })
+  @ApiOperation({ summary: 'Создание программы (3-ий уровень)' })
   @Post('/program')
   public createProgram(@Body() dto: CreateProgram) {
     return this.reasonsService.createProgram(dto);
@@ -49,6 +53,7 @@ export class ReasonsController {
 
   @UseGuards(JwtAuthenticationGuard)
   @ApiResponse({ status: 200, type: GetReasons })
+  @ApiOperation({ summary: 'Получение глобальных причин, причин и программ' })
   @Get()
   public get() {
     return this.reasonsService.get();

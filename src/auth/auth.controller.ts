@@ -13,7 +13,7 @@ import JwtAuthenticationGuard from './guard/jwt.guard';
 import { LocalAuthenticationGuard } from './guard/local.guard';
 import RequestWithUser from './interface/requestWithUser.interface';
 import { Response } from 'express';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { WorkgroupsGuard } from './guard/workgroups.guard';
 import { Workgroups } from './workgroups.decorator';
 import { GetUserDto } from 'src/user/dto/getUserDto.dto';
@@ -21,6 +21,7 @@ import { LoginDto } from 'src/user/dto/loginDto.dto';
 import { WORKGROUP_SISADMIN } from 'src/consts/workgroups.names';
 
 @Controller('auth')
+@ApiTags('Авторизация')
 export class AuthController {
   constructor(private authService: AuthService) {}
 

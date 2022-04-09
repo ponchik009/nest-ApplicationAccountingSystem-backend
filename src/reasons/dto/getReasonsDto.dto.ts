@@ -31,12 +31,7 @@ export class GetReasons {
 
   @ApiProperty({
     description: 'Список программ',
-    example: [
-      {
-        id: 1,
-        name: '1С:Бухглатерия',
-      },
-    ],
+    type: () => Program,
   })
   public programs: Program[];
 }

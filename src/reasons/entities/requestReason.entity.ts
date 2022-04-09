@@ -8,10 +8,15 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { GetGlobalReasonWithoutSubreasons } from '../dto/getGlobalReasonWithoutSubreasons.dto';
 import { GlobalReason } from './globalReason.entity';
 
 @Entity()
 export class RequestReason {
+  @ApiProperty({
+    description: 'Уникальный идентификатор',
+    example: 1,
+  })
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -31,6 +36,7 @@ export class RequestReason {
 
   @ApiProperty({
     description: 'Список глобальных причин, к которым можно отнести данную',
+    type: () => [GetGlobalReasonWithoutSubreasons],
   })
   @ManyToMany(
     () => GlobalReason,

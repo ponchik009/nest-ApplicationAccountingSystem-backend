@@ -5,12 +5,14 @@ import { Workgroup } from 'src/workgroup/workgroup.entity';
 export class RecruitRequest {
   @ApiProperty({
     description: 'Рабочая группа для донабора',
+    type: () => Workgroup,
   })
   @IsNotEmpty()
   public workgroup: Workgroup;
 
   @ApiProperty({
     description: 'Количество работ для данной рабочей группы',
+    type: 'number',
   })
   @IsNumber()
   public count: number;

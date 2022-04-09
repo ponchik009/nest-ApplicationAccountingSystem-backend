@@ -34,6 +34,10 @@ export class RequestHistory {
   @JoinColumn()
   public request: Request;
 
+  @ApiProperty({
+    description: 'Новая стадия заявки',
+    type: () => RequestStage,
+  })
   @ManyToOne(() => RequestStage)
   @JoinColumn()
   public stage: RequestStage;

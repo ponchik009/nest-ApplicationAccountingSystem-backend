@@ -10,6 +10,10 @@ import { RequestReason } from './requestReason.entity';
 
 @Entity()
 export class GlobalReason {
+  @ApiProperty({
+    description: 'Уникальный идентификатор',
+    example: 1,
+  })
   @PrimaryGeneratedColumn()
   public id: number;
 

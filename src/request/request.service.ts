@@ -114,6 +114,7 @@ export class RequestService {
       .createQueryBuilder('requestWork')
       .leftJoinAndSelect('requestWork.request', 'request')
       .leftJoinAndSelect('request.stage', 'requestStage')
+      .leftJoinAndSelect('requestWork.workgroup', 'workgroup')
       .where('requestWork.userId = :id', { id: user.id })
       .getMany();
   }
@@ -131,7 +132,10 @@ export class RequestService {
       .leftJoinAndSelect('request.works', 'works')
       .leftJoinAndSelect('request.messages', 'messages')
       .leftJoinAndSelect('works.user', 'perfromer')
+      .leftJoinAndSelect('works.workgroup', 'workWorkgroup')
       .leftJoinAndSelect('messages.files', 'files')
+      .leftJoinAndSelect('messages.user', 'user')
+      .leftJoinAndSelect('user.workgroup', 'workgroup')
       .where('request.id = :id', { id })
       .getOne();
 
@@ -176,17 +180,17 @@ export class RequestService {
       );
     }
 
-    if (!works.length) {
-      throw new HttpException(
-        'Работ по заявке не найдено',
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
     if (user.workgroup.id !== appointer.workgroup.id) {
       throw new HttpException(
         'Нельзя назначить заявку пользователю из другого отдела',
         HttpStatus.FORBIDDEN,
+      );
+    }
+
+    if (!works.length) {
+      throw new HttpException(
+        'Работ по заявке не найдено',
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -280,6 +284,8 @@ export class RequestService {
       request,
     });
     await this.requestHistoryRepo.save(newHistory);
+
+    return request;
   }
 
   public async rollBack(id: number, client: User) {
@@ -329,7 +335,7 @@ export class RequestService {
     const works = await this.getWorks(id, performer);
 
     let newStage = request.stage;
-    if (request.works.filter((work) => work.dateOfEnd !== null).length === 0)
+    if (request.works.filter((work) => work.user !== null).length === 0)
       newStage = await this.requestStageRepo.findOne({
         name: 'В ожидании',
       });
@@ -385,7 +391,7 @@ export class RequestService {
       );
     }
 
-    work.workgroup = workgroup;
+    // work.workgroup = workgroup;
     await this.requestWorkRepo.save(work);
 
     // сохраняем в историю
@@ -430,11 +436,22 @@ export class RequestService {
           this.requestWorkRepo.create({
             user: null,
             workgroup: recruit.workgroup,
-            request: request,
+            request: { id: request.id },
             dateOfEnd: null,
           }),
         );
       }
+    }
+
+    try {
+      request.works = request.works.concat(
+        await this.requestWorkRepo.save(works),
+      );
+    } catch (err) {
+      throw new HttpException(
+        'Рабочей группы не существует',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     // сохраняем в историю
@@ -446,7 +463,7 @@ export class RequestService {
     });
     await this.requestHistoryRepo.save(newHistory);
 
-    return await this.requestWorkRepo.save(works);
+    return request;
   }
 
   private async getWorks(requestId: number, performer: User) {

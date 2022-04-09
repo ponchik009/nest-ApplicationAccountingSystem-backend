@@ -15,10 +15,10 @@ export class Workgroup {
   @Column({ nullable: false, unique: true })
   public name: string;
 
-  @ApiProperty({
-    description: 'Пользватели рабочей группы',
-    type: () => [User],
-  })
+  // @ApiProperty({
+  //   description: 'Пользватели рабочей группы',
+  //   type: () => [User],
+  // })
   @OneToMany(() => User, (user: User) => user.workgroup)
   public users: User[];
 }

@@ -21,7 +21,8 @@ export class CreateRequest {
   public description: string;
 
   @ApiProperty({
-    description: 'Причина заявки',
+    description: 'Причина заявки (JSON строка)',
+    example: '{"id":1}',
   })
   @IsNotEmpty()
   public reason: string;

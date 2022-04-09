@@ -4,6 +4,10 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class File {
+  @ApiProperty({
+    description: 'Уникальный идентификатор',
+    example: 1,
+  })
   @PrimaryGeneratedColumn()
   public id: number;
 

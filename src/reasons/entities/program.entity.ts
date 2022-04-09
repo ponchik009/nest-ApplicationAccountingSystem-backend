@@ -3,6 +3,10 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Program {
+  @ApiProperty({
+    description: 'Уникальный идентификатор',
+    example: 1,
+  })
   @PrimaryGeneratedColumn()
   public id: number;
 
