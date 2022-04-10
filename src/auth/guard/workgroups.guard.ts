@@ -9,6 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import { User } from 'src/user/entities/user.entity';
+import RequestWithUser from '../interface/requestWithUser.interface';
 import { WORKGROUPS_KEY } from '../workgroups.decorator';
 
 @Injectable()
@@ -28,10 +29,10 @@ export class WorkgroupsGuard implements CanActivate {
         return true;
       }
 
-      const req = context.switchToHttp().getRequest();
+      const req = context.switchToHttp().getRequest<RequestWithUser>();
       const user: User = req.user;
 
-      if (!workgroups.includes(user.workgroup.name))
+      if (!workgroups.includes(user.workgroup.role.name))
         throw new HttpException('Отказано в доступе', HttpStatus.FORBIDDEN);
 
       return true;

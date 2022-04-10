@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
-import { Workgroup } from './workgroup/workgroup.entity';
+import { Workgroup } from './workgroup/entities/workgroup.entity';
 import { WorkgroupModule } from './workgroup/workgroup.module';
 import { AuthModule } from './auth/auth.module';
 import { ReasonsModule } from './reasons/reasons.module';
@@ -20,6 +20,7 @@ import { Message } from './message/message.entity';
 import { File } from './file/file.entity';
 import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { Role } from './workgroup/entities/role.entity';
 
 require('dotenv').config();
 
@@ -35,6 +36,7 @@ require('dotenv').config();
       entities: [
         User,
         Workgroup,
+        Role,
         GlobalReason,
         RequestReason,
         Program,

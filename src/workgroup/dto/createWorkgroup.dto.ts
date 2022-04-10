@@ -7,6 +7,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
+import { Role } from '../entities/role.entity';
 
 export class CreateWorkgroup {
   @ApiProperty({
@@ -16,4 +17,10 @@ export class CreateWorkgroup {
   @IsString()
   @IsNotEmpty()
   public name: string;
+
+  @ApiProperty({
+    description: 'Роль рабочей группы',
+    type: () => Role,
+  })
+  public role: Role;
 }

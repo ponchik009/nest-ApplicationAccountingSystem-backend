@@ -3,7 +3,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guard/jwt.guard';
 import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import { Workgroups } from 'src/auth/workgroups.decorator';
-import { WORKGROUP_SISADMIN } from 'src/consts/workgroups.names';
+import { ADMIN } from 'src/consts/workgroups.names';
 import { CreateGlobalReasonDto } from './dto/createGlobalReason.dto';
 import { CreateProgram } from './dto/createProgram.dto';
 import { CreateRequestReason } from './dto/createRequestReason.dto';
@@ -20,7 +20,7 @@ export class ReasonsController {
 
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN)
+  @Workgroups(ADMIN)
   @ApiResponse({ status: 201, type: GlobalReason })
   @ApiBody({ type: CreateGlobalReasonDto })
   @ApiOperation({ summary: 'Создание глобальной причины (1-го уровня)' })
@@ -31,7 +31,7 @@ export class ReasonsController {
 
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN)
+  @Workgroups(ADMIN)
   @ApiResponse({ status: 201, type: RequestReason })
   @ApiBody({ type: CreateRequestReason })
   @ApiOperation({ summary: 'Создание причины (2-го уровня)' })
@@ -42,7 +42,7 @@ export class ReasonsController {
 
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN)
+  @Workgroups(ADMIN)
   @ApiResponse({ status: 201, type: Program })
   @ApiBody({ type: CreateProgram })
   @ApiOperation({ summary: 'Создание программы (3-ий уровень)' })
@@ -53,7 +53,9 @@ export class ReasonsController {
 
   @UseGuards(JwtAuthenticationGuard)
   @ApiResponse({ status: 200, type: GetReasons })
-  @ApiOperation({ summary: 'Получение глобальных причин, причин и программ' })
+  @ApiOperation({
+    summary: 'Получение глобальных причин, подпричин и программ',
+  })
   @Get()
   public get() {
     return this.reasonsService.get();

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Workgroup } from 'src/workgroup/workgroup.entity';
+import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
 import {
   Column,
   Entity,

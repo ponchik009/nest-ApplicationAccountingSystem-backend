@@ -25,7 +25,7 @@ import JwtAuthenticationGuard from 'src/auth/guard/jwt.guard';
 import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import RequestWithUser from 'src/auth/interface/requestWithUser.interface';
 import { Workgroups } from 'src/auth/workgroups.decorator';
-import { WORKGROUP_1S, WORKGROUP_SISADMIN } from 'src/consts/workgroups.names';
+import { ADMIN, SPECIALIST } from 'src/consts/workgroups.names';
 import { CreateMessage } from 'src/message/dto/createMessage.dto';
 import { AddMessage } from './dto/addMessage.dto';
 import { AppointRequest } from './dto/appointRequest.dto';
@@ -52,7 +52,7 @@ export class RequestController {
   @ApiBody({ type: CreateStage })
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN)
+  @Workgroups(ADMIN)
   @Post('/stage')
   public createStage(@Body() dto: CreateStage) {
     return this.requestService.createStage(dto);
@@ -87,7 +87,7 @@ export class RequestController {
   @ApiResponse({ status: 200, type: [RequestWork] })
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Workgroups(ADMIN, SPECIALIST)
   @Get('/exchange')
   public getExchange(@Req() request: RequestWithUser) {
     return this.requestService.getExchange(request.user);
@@ -109,7 +109,7 @@ export class RequestController {
   @ApiResponse({ status: 200, type: [GetWorkWithRequestStage] })
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Workgroups(ADMIN, SPECIALIST)
   @Get('/myWork')
   public getMyWork(@Req() request: RequestWithUser) {
     return this.requestService.getMyWork(request.user);
@@ -141,7 +141,7 @@ export class RequestController {
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Workgroups(ADMIN, SPECIALIST)
   @Patch(':id/appoint')
   public appoint(
     @Param('id') id: number,
@@ -157,7 +157,7 @@ export class RequestController {
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Workgroups(ADMIN, SPECIALIST)
   @Patch(':id/perform')
   public perform(@Param('id') id: number, @Req() request: RequestWithUser) {
     return this.requestService.perform(id, request.user);
@@ -169,7 +169,7 @@ export class RequestController {
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Workgroups(ADMIN, SPECIALIST)
   @Patch(':id/refuse')
   public refuse(@Param('id') id: number, @Req() request: RequestWithUser) {
     return this.requestService.refuse(id, request.user);
@@ -181,7 +181,7 @@ export class RequestController {
   @ApiResponse({ status: 200, type: GetWorkWithRequestStage })
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Workgroups(ADMIN, SPECIALIST)
   @Patch('redirect')
   public redirect(
     @Body() dto: RedirectRequest,
@@ -197,7 +197,7 @@ export class RequestController {
   @ApiBody({ type: [RecruitRequest] })
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Workgroups(ADMIN, SPECIALIST)
   @Patch(':id/recruit')
   public recruit(
     @Param('id') id: number,
@@ -228,7 +228,7 @@ export class RequestController {
   }
 
   @ApiOperation({
-    summary: 'Откат заявки пользователем',
+    summary: 'Добавить сообщение в чат по заявке',
   })
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
   @UseGuards(JwtAuthenticationGuard)

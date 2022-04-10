@@ -13,9 +13,13 @@ export class UserService {
   ) {}
 
   public async getById(id: number): Promise<User> {
-    const user = await this.userRepo.findOne(id, {
-      relations: ['workgroup'],
-    });
+    const user = await this.userRepo
+      .createQueryBuilder('user')
+      .select(['user', 'workgroup'])
+      .where('user.id = :id', { id })
+      .leftJoin('user.workgroup', 'workgroup')
+      .leftJoinAndSelect('workgroup.role', 'role')
+      .getOne();
 
     if (!user) {
       throw new HttpException('Пользователь не найден!', HttpStatus.NOT_FOUND);
@@ -36,6 +40,7 @@ export class UserService {
       ])
       .where('user.login = :login', { login })
       .leftJoin('user.workgroup', 'workgroup')
+      .leftJoinAndSelect('workgroup.role', 'role')
       .getOne();
 
     if (!user) {

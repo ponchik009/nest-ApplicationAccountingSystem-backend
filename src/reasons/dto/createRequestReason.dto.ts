@@ -7,7 +7,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
-import { Workgroup } from 'src/workgroup/workgroup.entity';
+import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
 import { GlobalReason } from '../entities/globalReason.entity';
 
 export class CreateRequestReason {

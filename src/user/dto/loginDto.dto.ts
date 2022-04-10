@@ -6,7 +6,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
-import { Workgroup } from 'src/workgroup/workgroup.entity';
+import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
 
 export class LoginDto {
   @ApiProperty({ description: 'Логин', example: 'ponchik009' })

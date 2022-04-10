@@ -1,6 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Role } from './role.entity';
 
 @Entity()
 export class Workgroup {
@@ -21,4 +28,7 @@ export class Workgroup {
   // })
   @OneToMany(() => User, (user: User) => user.workgroup)
   public users: User[];
+
+  @ManyToOne(() => Role)
+  public role: Role;
 }

@@ -13,12 +13,12 @@ import JwtAuthenticationGuard from 'src/auth/guard/jwt.guard';
 import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import RequestWithUser from 'src/auth/interface/requestWithUser.interface';
 import { Workgroups } from 'src/auth/workgroups.decorator';
-import { WORKGROUP_1S, WORKGROUP_SISADMIN } from 'src/consts/workgroups.names';
+import { ADMIN, SPECIALIST } from 'src/consts/workgroups.names';
 import { GetUserDto } from 'src/user/dto/getUserDto.dto';
 import { User } from 'src/user/entities/user.entity';
 import { CreateWorkgroup } from './dto/createWorkgroup.dto';
 import { GetWorkgroupWithUsers } from './dto/getWorkgroupWithUsers.dto';
-import { Workgroup } from './workgroup.entity';
+import { Workgroup } from './entities/workgroup.entity';
 import { WorkgroupService } from './workgroup.service';
 
 @ApiTags('Рабочие группы')
@@ -28,7 +28,7 @@ export class WorkgroupController {
 
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN)
+  @Workgroups(ADMIN)
   @Post()
   @ApiResponse({ status: 201, type: Workgroup })
   @ApiBody({ type: CreateWorkgroup })
@@ -47,7 +47,7 @@ export class WorkgroupController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Get(':id/getUsers')
-  @Workgroups(WORKGROUP_SISADMIN, WORKGROUP_1S)
+  @Workgroups(ADMIN, SPECIALIST)
   @ApiResponse({ status: 200, type: GetWorkgroupWithUsers })
   @ApiOperation({ summary: 'Получить пользователей рабочей группы' })
   public getUsers(@Param('id') id: number, @Req() request: RequestWithUser) {

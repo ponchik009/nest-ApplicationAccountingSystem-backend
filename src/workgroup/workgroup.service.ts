@@ -1,14 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateWorkgroup } from './dto/createWorkgroup.dto';
-import { Workgroup } from './workgroup.entity';
+import { Role } from './entities/role.entity';
+import { Workgroup } from './entities/workgroup.entity';
 
 @Injectable()
 export class WorkgroupService {
   constructor(
     @InjectRepository(Workgroup) private workgroupRepo: Repository<Workgroup>,
+    @InjectRepository(Role) private roleRepo: Repository<Role>,
   ) {}
 
   public async getById(id: number) {
@@ -30,7 +32,11 @@ export class WorkgroupService {
 
   public async create(dto: CreateWorkgroup) {
     try {
-      const workgroup = this.workgroupRepo.create(dto);
+      const role = dto.role
+        ? await this.roleRepo.findOne(dto.role.id)
+        : await this.roleRepo.findOne({ name: 'Специалист' });
+
+      const workgroup = this.workgroupRepo.create({ ...dto, role });
 
       return await this.workgroupRepo.save(workgroup);
     } catch (err) {

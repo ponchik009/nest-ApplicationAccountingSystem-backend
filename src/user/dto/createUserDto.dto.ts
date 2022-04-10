@@ -6,7 +6,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
-import { Workgroup } from 'src/workgroup/workgroup.entity';
+import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
 
 export class CreateUserDto {
   @ApiProperty({ description: 'ФИО', example: 'Иванов Иван Иванович' })

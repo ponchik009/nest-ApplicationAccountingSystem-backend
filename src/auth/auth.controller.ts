@@ -18,7 +18,7 @@ import { WorkgroupsGuard } from './guard/workgroups.guard';
 import { Workgroups } from './workgroups.decorator';
 import { GetUserDto } from 'src/user/dto/getUserDto.dto';
 import { LoginDto } from 'src/user/dto/loginDto.dto';
-import { WORKGROUP_SISADMIN } from 'src/consts/workgroups.names';
+import { ADMIN } from 'src/consts/workgroups.names';
 
 @Controller('auth')
 @ApiTags('Авторизация')
@@ -30,7 +30,7 @@ export class AuthController {
   @ApiBody({ type: CreateUserDto })
   @UseGuards(WorkgroupsGuard)
   @UseGuards(JwtAuthenticationGuard)
-  @Workgroups(WORKGROUP_SISADMIN)
+  @Workgroups(ADMIN)
   @Post('register')
   async register(@Body() dto: CreateUserDto) {
     return this.authService.register(dto);

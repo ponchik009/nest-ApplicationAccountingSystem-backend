@@ -8,7 +8,7 @@ import {
   Length,
 } from 'class-validator';
 import { GetUserWithoutWorkgroup } from 'src/user/dto/getUserWithoutWorkgroup.dto';
-import { Workgroup } from 'src/workgroup/workgroup.entity';
+import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
 import { GetRequestWithStage } from './getRequestWithStage.dto';
 
 export class GetWorkWithUser {

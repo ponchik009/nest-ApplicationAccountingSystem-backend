@@ -7,7 +7,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
-import { Workgroup } from 'src/workgroup/workgroup.entity';
+import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
 import { GetRequestWithStage } from './getRequestWithStage.dto';
 
 export class GetWorkWithRequestStage {
