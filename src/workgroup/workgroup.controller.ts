@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Param,
-  Patch,
   Post,
   Req,
   UseGuards,
@@ -14,8 +13,7 @@ import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import RequestWithUser from 'src/auth/interface/requestWithUser.interface';
 import { Workgroups } from 'src/auth/workgroups.decorator';
 import { ADMIN, SPECIALIST } from 'src/consts/workgroups.names';
-import { GetUserDto } from 'src/user/dto/getUserDto.dto';
-import { User } from 'src/user/entities/user.entity';
+
 import { CreateWorkgroup } from './dto/createWorkgroup.dto';
 import { GetWorkgroupWithUsers } from './dto/getWorkgroupWithUsers.dto';
 import { Workgroup } from './entities/workgroup.entity';

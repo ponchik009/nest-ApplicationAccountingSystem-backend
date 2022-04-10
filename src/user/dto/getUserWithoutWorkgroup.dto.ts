@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsNotEmpty,
-  isNotEmpty,
-  IsString,
-  Length,
-} from 'class-validator';
-import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class GetUserWithoutWorkgroup {
   @ApiProperty({

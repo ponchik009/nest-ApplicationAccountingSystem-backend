@@ -1,14 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsEmail,
-  IsNotEmpty,
-  isNotEmpty,
-  IsObject,
-  IsString,
-  Length,
-} from 'class-validator';
-import { RequestReason } from 'src/reasons/entities/requestReason.entity';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateRequest {
   @ApiProperty({

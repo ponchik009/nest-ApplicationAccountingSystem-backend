@@ -1,12 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsEmail,
-  IsNotEmpty,
-  isNotEmpty,
-  IsString,
-  Length,
-} from 'class-validator';
 
 export class GetRequest {
   @ApiProperty({ description: 'Уникальный идентификатор', example: 1 })

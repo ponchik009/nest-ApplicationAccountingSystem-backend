@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsEmail,
-  IsNotEmpty,
-  isNotEmpty,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { GetUserWithoutWorkgroup } from 'src/user/dto/getUserWithoutWorkgroup.dto';
 
 export class GetWorkgroupWithUsers {

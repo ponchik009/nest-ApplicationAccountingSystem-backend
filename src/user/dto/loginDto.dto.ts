@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsNotEmpty,
-  isNotEmpty,
-  IsString,
-  Length,
-} from 'class-validator';
-import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
+import { IsNotEmpty } from 'class-validator';
 
 export class LoginDto {
   @ApiProperty({ description: 'Логин', example: 'ponchik009' })

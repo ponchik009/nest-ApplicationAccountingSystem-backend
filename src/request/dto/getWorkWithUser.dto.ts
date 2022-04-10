@@ -1,15 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsEmail,
-  IsNotEmpty,
-  isNotEmpty,
-  IsString,
-  Length,
-} from 'class-validator';
+
 import { GetUserWithoutWorkgroup } from 'src/user/dto/getUserWithoutWorkgroup.dto';
 import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
-import { GetRequestWithStage } from './getRequestWithStage.dto';
 
 export class GetWorkWithUser {
   @ApiProperty({ description: 'Уникальный идентификатор', example: 1 })

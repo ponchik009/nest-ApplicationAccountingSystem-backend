@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsNotEmpty,
-  isNotEmpty,
-  IsString,
-  Length,
-} from 'class-validator';
-import { RequestReason } from '../entities/requestReason.entity';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class GetGlobalReasonWithoutSubreasons {
   @ApiProperty({

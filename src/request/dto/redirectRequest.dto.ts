@@ -1,13 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsEmail,
-  IsNotEmpty,
-  isNotEmpty,
-  IsString,
-  Length,
-} from 'class-validator';
-import { User } from 'src/user/entities/user.entity';
+import { IsNotEmpty } from 'class-validator';
+
 import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
 import { RequestWork } from '../entities/requestWorks.entity';
 

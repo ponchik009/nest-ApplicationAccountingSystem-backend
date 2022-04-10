@@ -11,7 +11,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { workerData } from 'worker_threads';
+
 import { RequestStage } from './requestStage.entity';
 import { RequestWork } from './requestWorks.entity';
 

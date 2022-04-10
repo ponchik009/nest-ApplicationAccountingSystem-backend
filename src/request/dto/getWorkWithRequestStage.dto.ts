@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsEmail,
-  IsNotEmpty,
-  isNotEmpty,
-  IsString,
-  Length,
-} from 'class-validator';
+
 import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
 import { GetRequestWithStage } from './getRequestWithStage.dto';
 

@@ -6,7 +6,6 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import { User } from 'src/user/entities/user.entity';
 import RequestWithUser from '../interface/requestWithUser.interface';

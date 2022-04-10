@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsEmail,
-  IsNotEmpty,
-  isNotEmpty,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 import { Workgroup } from 'src/workgroup/entities/workgroup.entity';
 import { GlobalReason } from '../entities/globalReason.entity';
 
