@@ -19,7 +19,7 @@ export class User {
   public name: string;
 
   @ApiProperty({ description: 'Почта', example: 'user@mail.ru' })
-  @Column({ select: false, nullable: false, unique: true })
+  @Column({ select: true, nullable: false, unique: true })
   public email: string;
 
   @ApiProperty({ description: 'Логин', example: 'ponchik009' })
@@ -41,4 +41,7 @@ export class User {
   @ManyToOne(() => Workgroup, (workgroup: Workgroup) => workgroup.users)
   @JoinColumn()
   public workgroup: Workgroup;
+
+  @Column({ select: false, nullable: true })
+  public verifCode: string;
 }
