@@ -27,6 +27,21 @@ export class UserService {
     return user;
   }
 
+  public async getByTelegram(telegram: string): Promise<User> {
+    const user = await this.userRepo
+      .createQueryBuilder('user')
+      .select(['user', 'workgroup'])
+      .where('user.telegram = :telegram', { telegram })
+      .leftJoin('user.workgroup', 'workgroup')
+      .leftJoinAndSelect('workgroup.role', 'role')
+      .getOne();
+
+    if (!user) {
+      throw new HttpException('Пользователь не найден!', HttpStatus.NOT_FOUND);
+    }
+    return user;
+  }
+
   public async getByLogin(login: string): Promise<User> {
     const user = await this.userRepo
       .createQueryBuilder('user')

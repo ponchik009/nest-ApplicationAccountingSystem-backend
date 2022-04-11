@@ -19,6 +19,7 @@ import { Workgroups } from './workgroups.decorator';
 import { GetUserDto } from 'src/user/dto/getUserDto.dto';
 import { LoginDto } from 'src/user/dto/loginDto.dto';
 import { ADMIN } from 'src/consts/workgroups.names';
+import { JwtTelegramGuard } from './guard/jwtTelegram.guard';
 
 @Controller('auth')
 @ApiTags('Авторизация')
@@ -29,7 +30,7 @@ export class AuthController {
   @ApiResponse({ status: 201, type: GetUserDto })
   @ApiBody({ type: CreateUserDto })
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTelegramGuard)
   @Workgroups(ADMIN)
   @Post('register')
   async register(@Body() dto: CreateUserDto) {
@@ -48,17 +49,17 @@ export class AuthController {
     return response.send(user);
   }
 
-  @UseGuards(LocalAuthenticationGuard)
+  // @UseGuards(LocalAuthenticationGuard)
   @ApiOperation({ summary: 'Выход из аккаунта' })
   @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTelegramGuard)
   @Post('logout')
   async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
     response.setHeader('Set-Cookie', this.authService.getCookieForLogOut());
     return response.sendStatus(200);
   }
 
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTelegramGuard)
   @ApiOperation({ summary: 'Аутентификация по токену' })
   @ApiResponse({ status: 200, type: GetUserDto })
   @Get()

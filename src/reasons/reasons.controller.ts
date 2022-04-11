@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guard/jwt.guard';
+import { JwtTelegramGuard } from 'src/auth/guard/jwtTelegram.guard';
 import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import { Workgroups } from 'src/auth/workgroups.decorator';
 import { ADMIN } from 'src/consts/workgroups.names';
@@ -13,13 +14,14 @@ import { Program } from './entities/program.entity';
 import { RequestReason } from './entities/requestReason.entity';
 import { ReasonsService } from './reasons.service';
 
+@UseGuards(JwtTelegramGuard)
 @ApiTags('Причины заявок')
 @Controller('reasons')
 export class ReasonsController {
   constructor(private reasonsService: ReasonsService) {}
 
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtAuthenticationGuard)
   @Workgroups(ADMIN)
   @ApiResponse({ status: 201, type: GlobalReason })
   @ApiBody({ type: CreateGlobalReasonDto })
@@ -30,7 +32,7 @@ export class ReasonsController {
   }
 
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtAuthenticationGuard)
   @Workgroups(ADMIN)
   @ApiResponse({ status: 201, type: RequestReason })
   @ApiBody({ type: CreateRequestReason })
@@ -41,7 +43,7 @@ export class ReasonsController {
   }
 
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtAuthenticationGuard)
   @Workgroups(ADMIN)
   @ApiResponse({ status: 201, type: Program })
   @ApiBody({ type: CreateProgram })
@@ -51,7 +53,7 @@ export class ReasonsController {
     return this.reasonsService.createProgram(dto);
   }
 
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtAuthenticationGuard)
   @ApiResponse({ status: 200, type: GetReasons })
   @ApiOperation({
     summary: 'Получение глобальных причин, подпричин и программ',

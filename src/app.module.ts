@@ -21,6 +21,7 @@ import { File } from './file/file.entity';
 import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { Role } from './workgroup/entities/role.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 require('dotenv').config();
 

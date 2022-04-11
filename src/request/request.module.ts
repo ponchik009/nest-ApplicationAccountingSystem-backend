@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { RequestService } from './request.service';
 import { RequestController } from './request.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -10,6 +10,8 @@ import { ReasonsModule } from 'src/reasons/reasons.module';
 import { UserModule } from 'src/user/user.module';
 import { WorkgroupModule } from 'src/workgroup/workgroup.module';
 import { MessageModule } from 'src/message/message.module';
+import { AuthModule } from 'src/auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   providers: [RequestService],
@@ -22,9 +24,10 @@ import { MessageModule } from 'src/message/message.module';
       RequestHistory,
     ]),
     ReasonsModule,
-    UserModule,
+    forwardRef(() => UserModule),
     WorkgroupModule,
     MessageModule,
+    AuthModule,
   ],
 })
 export class RequestModule {}

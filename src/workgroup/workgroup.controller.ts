@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guard/jwt.guard';
+import { JwtTelegramGuard } from 'src/auth/guard/jwtTelegram.guard';
 import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import RequestWithUser from 'src/auth/interface/requestWithUser.interface';
 import { Workgroups } from 'src/auth/workgroups.decorator';
@@ -19,13 +20,14 @@ import { GetWorkgroupWithUsers } from './dto/getWorkgroupWithUsers.dto';
 import { Workgroup } from './entities/workgroup.entity';
 import { WorkgroupService } from './workgroup.service';
 
+@UseGuards(JwtTelegramGuard)
 @ApiTags('Рабочие группы')
 @Controller('workgroup')
 export class WorkgroupController {
   constructor(private workgroupService: WorkgroupService) {}
 
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtAuthenticationGuard)
   @Workgroups(ADMIN)
   @Post()
   @ApiResponse({ status: 201, type: Workgroup })
@@ -35,7 +37,7 @@ export class WorkgroupController {
     return this.workgroupService.create(dto);
   }
 
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtAuthenticationGuard)
   @Get()
   @ApiOperation({ summary: 'Получить все рабочие группы' })
   @ApiResponse({ status: 200, type: [Workgroup] })
@@ -43,7 +45,7 @@ export class WorkgroupController {
     return this.workgroupService.getAll();
   }
 
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtAuthenticationGuard)
   @Get(':id/getUsers')
   @Workgroups(ADMIN, SPECIALIST)
   @ApiResponse({ status: 200, type: GetWorkgroupWithUsers })

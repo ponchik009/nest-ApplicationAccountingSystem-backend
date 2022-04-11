@@ -13,6 +13,7 @@ import {
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import JwtAuthenticationGuard from 'src/auth/guard/jwt.guard';
+import { JwtTelegramGuard } from 'src/auth/guard/jwtTelegram.guard';
 import { WorkgroupsGuard } from 'src/auth/guard/workgroups.guard';
 import RequestWithUser from 'src/auth/interface/requestWithUser.interface';
 import { Workgroups } from 'src/auth/workgroups.decorator';
@@ -32,6 +33,7 @@ import { RequestStage } from './entities/requestStage.entity';
 import { RequestWork } from './entities/requestWorks.entity';
 import { RequestService } from './request.service';
 
+@UseGuards(JwtTelegramGuard)
 @ApiTags('Заявки')
 @Controller('request')
 export class RequestController {
@@ -41,7 +43,7 @@ export class RequestController {
   @ApiResponse({ status: 201, type: RequestStage })
   @ApiBody({ type: CreateStage })
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Workgroups(ADMIN)
   @Post('/stage')
   public createStage(@Body() dto: CreateStage) {
@@ -51,7 +53,7 @@ export class RequestController {
   @ApiOperation({ summary: 'Создание заявки' })
   @ApiResponse({ status: 201, type: Request })
   @ApiBody({ type: CreateRequest })
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Post()
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -76,7 +78,7 @@ export class RequestController {
   })
   @ApiResponse({ status: 200, type: [RequestWork] })
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Workgroups(ADMIN, SPECIALIST)
   @Get('/exchange')
   public getExchange(@Req() request: RequestWithUser) {
@@ -87,7 +89,7 @@ export class RequestController {
     summary: 'Получение созданных пользователем заявок',
   })
   @ApiResponse({ status: 200, type: [GetRequestWithStage] })
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Get('/my')
   public getMy(@Req() request: RequestWithUser) {
     return this.requestService.getMy(request.user);
@@ -98,7 +100,8 @@ export class RequestController {
   })
   @ApiResponse({ status: 200, type: [GetWorkWithRequestStage] })
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Workgroups(ADMIN, SPECIALIST)
   @Get('/myWork')
   public getMyWork(@Req() request: RequestWithUser) {
@@ -109,7 +112,7 @@ export class RequestController {
     summary: 'Получение информации о конкретной заявке',
   })
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Get('/:id')
   public get(@Param('id') id: number) {
     return this.requestService.getById(id);
@@ -119,7 +122,7 @@ export class RequestController {
     summary: 'Получение истории заявки',
   })
   @ApiResponse({ status: 200, type: [RequestHistory] })
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Get('/:id/history')
   public getHistory(@Param('id') id: number) {
     return this.requestService.getHistory(id);
@@ -130,7 +133,7 @@ export class RequestController {
   })
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Workgroups(ADMIN, SPECIALIST)
   @Patch(':id/appoint')
   public appoint(
@@ -146,7 +149,7 @@ export class RequestController {
   })
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Workgroups(ADMIN, SPECIALIST)
   @Patch(':id/perform')
   public perform(@Param('id') id: number, @Req() request: RequestWithUser) {
@@ -158,7 +161,7 @@ export class RequestController {
   })
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Workgroups(ADMIN, SPECIALIST)
   @Patch(':id/refuse')
   public refuse(@Param('id') id: number, @Req() request: RequestWithUser) {
@@ -170,7 +173,7 @@ export class RequestController {
   })
   @ApiResponse({ status: 200, type: GetWorkWithRequestStage })
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Workgroups(ADMIN, SPECIALIST)
   @Patch('redirect')
   public redirect(
@@ -186,7 +189,7 @@ export class RequestController {
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
   @ApiBody({ type: [RecruitRequest] })
   @UseGuards(WorkgroupsGuard)
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Workgroups(ADMIN, SPECIALIST)
   @Patch(':id/recruit')
   public recruit(
@@ -201,7 +204,7 @@ export class RequestController {
     summary: 'Закрытие заявки пользователем',
   })
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Patch(':id/approve')
   public approve(@Param('id') id: number, @Req() request: RequestWithUser) {
     return this.requestService.approve(id, request.user);
@@ -211,7 +214,7 @@ export class RequestController {
     summary: 'Откат заявки пользователем',
   })
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Patch(':id/rollback')
   public rollBack(@Param('id') id: number, @Req() request: RequestWithUser) {
     return this.requestService.rollBack(id, request.user);
@@ -221,7 +224,7 @@ export class RequestController {
     summary: 'Добавить сообщение в чат по заявке',
   })
   @ApiResponse({ status: 200, type: GetRequestWithWorks })
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtTelegramGuard)
   @Post(':id/addMessage')
   @UseInterceptors(
     FileFieldsInterceptor([
