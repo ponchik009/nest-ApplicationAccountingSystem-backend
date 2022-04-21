@@ -24,7 +24,7 @@ export class RequestReason {
     description: 'Название',
     example: 'Требуется консультация по работе с программой',
   })
-  @Column({ nullable: false, unique: true })
+  @Column({ nullable: false })
   public name: string;
 
   @ApiProperty({
