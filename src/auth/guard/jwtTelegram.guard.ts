@@ -23,7 +23,13 @@ export class JwtTelegramGuard implements CanActivate {
     try {
       const req = context.switchToHttp().getRequest();
       if (req.headers.cookie) {
-        const authCookie = req.headers.cookie.split('=')[1];
+        const cookies = req.headers.cookie.split('; ');
+        let authCookie = '';
+        cookies.forEach((cookie) => {
+          if (cookie.split('=')[0] == 'Authentication') {
+            authCookie = cookie.split('=')[1];
+          }
+        });
         const payload = this.jwtService.verify<TokenPayload>(authCookie);
         return new Promise(async (resolve, reject) => {
           this.userService
