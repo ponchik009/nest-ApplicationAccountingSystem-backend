@@ -6,6 +6,7 @@ import {
   Req,
   Res,
   UseGuards,
+  HttpCode
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/user/dto/createUserDto.dto';
 import { AuthService } from './auth.service';
@@ -37,6 +38,7 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
+  @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
   @ApiOperation({ summary: 'Вход в аккаунт' })
   @ApiResponse({ status: 200, type: GetUserDto })
