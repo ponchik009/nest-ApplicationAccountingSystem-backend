@@ -48,8 +48,10 @@ export class RequestService {
 
   public async createRequest(dto: CreateRequest, user: User, files) {
     try {
-      const reasonFromJson = JSON.parse(dto.reason) as RequestReason;
-      const reason = await this.reasonsService.getReasonById(reasonFromJson.id);
+      console.log(dto);
+
+      const reason = await this.reasonsService.getReasonById(dto.reason);
+      console.log(reason);
       const request = this.requestRepo.create({ ...dto, reason, messages: [] });
 
       request.date = new Date(Date.now());

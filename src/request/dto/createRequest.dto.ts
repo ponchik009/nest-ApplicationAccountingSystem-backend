@@ -12,9 +12,9 @@ export class CreateRequest {
   public description: string;
 
   @ApiProperty({
-    description: 'Причина заявки (JSON строка)',
-    example: '{"id":1}',
+    description: 'Причина заявки (id)',
+    example: 1,
   })
   @IsNotEmpty()
-  public reason: string;
+  public reason: number;
 }
