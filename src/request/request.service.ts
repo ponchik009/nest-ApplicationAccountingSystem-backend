@@ -97,7 +97,7 @@ export class RequestService {
   public async getExchange(user: User) {
     return await this.requestWorkRepo.find({
       where: { workgroup: { id: user.workgroup.id }, user: null },
-      relations: ['request'],
+      relations: ['request', 'request.stage'],
     });
   }
 
