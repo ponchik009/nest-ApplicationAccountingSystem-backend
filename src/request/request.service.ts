@@ -96,7 +96,7 @@ export class RequestService {
 
   public async getExchange(user: User) {
     return await this.requestWorkRepo.find({
-      where: { workgroup: { id: user.workgroup.id }, user: null },
+      where: { workgroup: { id: user.workgroup.id }, dateOfEnd: null },
       relations: ['request', 'request.stage'],
     });
   }
@@ -275,6 +275,10 @@ export class RequestService {
     });
     request.stage = newStage;
     await this.requestRepo.save(request);
+
+    request.works.forEach(
+      (work) => (work.dateOfEnd = !work.dateOfEnd && new Date()),
+    );
 
     // сохраняем в историю
     const newHistory = this.requestHistoryRepo.create({
