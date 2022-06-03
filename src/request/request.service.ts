@@ -274,11 +274,11 @@ export class RequestService {
       name: 'Закрыта',
     });
     request.stage = newStage;
-    await this.requestRepo.save(request);
-
     request.works.forEach(
       (work) => (work.dateOfEnd = !work.dateOfEnd && new Date()),
     );
+    await this.requestRepo.save(request);
+    await this.requestWorkRepo.save(request.works);
 
     // сохраняем в историю
     const newHistory = this.requestHistoryRepo.create({
