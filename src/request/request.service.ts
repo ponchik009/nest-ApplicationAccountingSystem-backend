@@ -275,7 +275,7 @@ export class RequestService {
     });
     request.stage = newStage;
     request.works.forEach(
-      (work) => (work.dateOfEnd = !work.dateOfEnd && new Date()),
+      (work) => (work.dateOfEnd = work.dateOfEnd || new Date()),
     );
     await this.requestRepo.save(request);
     await this.requestWorkRepo.save(request.works);
